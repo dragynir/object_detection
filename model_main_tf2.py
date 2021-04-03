@@ -30,7 +30,7 @@ python model_main_tf2.py -- \
 
 import sys
 sys.path.append('/content/Tensorflow/models/research/')
-
+sys.path.append('/content/Tensorflow/models')
 
 from absl import flags
 import tensorflow.compat.v2 as tf
