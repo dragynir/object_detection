@@ -690,8 +690,9 @@ def train_loop(
             manager.save()
             checkpointed_step = int(global_step.value())
           print('Eval model============================================')
-          eval_continuously(pipeline_config_path, model_dir=model_dir, checkpoint_dir=model_dir, timeout=20)
-
+          eval_metrics = eval_continuously(pipeline_config_path, model_dir=model_dir, checkpoint_dir=model_dir, timeout=20)
+          print(eval_metrics)
+          
     #       --pipeline_config_path={pipeline_fname} \
     # --model_dir={model_dir_eval} \
     # --checkpoint_dir={model_dir} \
@@ -1149,7 +1150,7 @@ def eval_continuously(
     summary_writer = tf.compat.v2.summary.create_file_writer(
         os.path.join(model_dir, 'eval', eval_input_config.name))
     with summary_writer.as_default():
-      eager_eval_loop(
+      eval_metrics = eager_eval_loop(
           detection_model,
           configs,
           eval_input,
@@ -1157,3 +1158,4 @@ def eval_continuously(
           postprocess_on_cpu=postprocess_on_cpu,
           global_step=global_step,
           )
+    return eval_metrics
