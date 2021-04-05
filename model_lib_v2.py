@@ -475,6 +475,9 @@ def train_loop(
     performance_summary_exporter: function for exporting performance metrics.
     **kwargs: Additional keyword arguments for configuration override.
   """
+
+  print('START train looop function ========================')
+
   ## Parse the configs
   get_configs_from_pipeline_file = MODEL_BUILD_UTIL_MAP[
       'get_configs_from_pipeline_file']
@@ -686,6 +689,23 @@ def train_loop(
               checkpoint_every_n):
             manager.save()
             checkpointed_step = int(global_step.value())
+          print('Eval model============================================')
+          eval_continuously(pipeline_config_path, model_dir=model_dir, checkpoint_dir=model_dir, timeout=20)
+
+    #       --pipeline_config_path={pipeline_fname} \
+    # --model_dir={model_dir_eval} \
+    # --checkpoint_dir={model_dir} \
+
+    #         pipeline_config_path,
+    #         config_override=None,
+    #         train_steps=None,
+    #         sample_1_of_n_eval_examples=1,
+    #         sample_1_of_n_eval_on_train_examples=1,
+    #         use_tpu=False,
+    #         override_eval_num_epochs=True,
+    #         postprocess_on_cpu=False,
+    #         model_dir=None,
+    #         checkpoint_dir=None,
 
   # Remove the checkpoint directories of the non-chief workers that
   # MultiWorkerMirroredStrategy forces us to save during sync distributed
