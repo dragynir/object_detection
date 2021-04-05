@@ -601,6 +601,8 @@ def train_loop(
 
         ckpt = tf.compat.v2.train.Checkpoint(
             step=global_step, model=detection_model, optimizer=optimizer)
+        val_ckpt = tf.compat.v2.train.Checkpoint(
+            step=global_step, model=detection_model, optimizer=optimizer)
 
         manager_dir = get_filepath(strategy, model_dir)
         if not strategy.extended.should_checkpoint:
@@ -613,6 +615,7 @@ def train_loop(
         # in a worker.
         latest_checkpoint = tf.train.latest_checkpoint(model_dir)
         ckpt.restore(latest_checkpoint)
+        val_ckpt.restore(latest_checkpoint)
 
         def train_step_fn(features, labels):
           """Single train step."""

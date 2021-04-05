@@ -3,37 +3,20 @@ from tensorflow.python.platform import tf_logging as logging
 
 
 class ModelCheckpoint():
-#   """Stop training when a monitored metric has stopped improving.
-#   Assuming the goal of a training is to minimize the loss. With this, the
-#   metric to be monitored would be `'loss'`, and mode would be `'min'`.
-#     min_delta: Minimum change in the monitored quantity
-#         to qualify as an improvement, i.e. an absolute
-#         change of less than min_delta, will count as no
-#         improvement.
-#     patience: Number of epochs with no improvement
-#         after which training will be stopped.
-#     verbose: verbosity mode.
-#     mode: One of `{"min", "max"}`. In `min` mode,
-#         training will stop when the quantity
-#         monitored has stopped decreasing; in `"max"`
-#         mode it will stop when the quantity
-#         monitored has stopped increasing;
-#   Example:
-#   >>> callback = EarlyStopping(patience=3)
-#   >>> # This callback will stop the training when there is no improvement in
-#   >>> # the validation loss for three consecutive epochs.
-#   >>> callback.on_epoch_end(epoch=your_epoch_number, current=your_current_loss)
-#   >>> # on_epoch_end return if Early stopping performed
-#   """
+  """
+  """
 
   def __init__(self,
-               manager,
+               checkpoint,
+               save_name,
                mode='min',
                ):
 
     self.patience = patience
     self.stopped_epoch = 0
+    self.checkpoint = checkpoint
     self.baseline = baseline
+    self.save_name = save_name
 
 
     if mode not in ['min', 'max']:
@@ -61,6 +44,7 @@ class ModelCheckpoint():
       return
     if self.monitor_op(current, self.best):
       self.best = current
+      self.checkpoint.save(self.save_name)
       return True
 
     return False     
@@ -86,8 +70,8 @@ class EarlyStopping():
   >>> callback = EarlyStopping(patience=3)
   >>> # This callback will stop the training when there is no improvement in
   >>> # the validation loss for three consecutive epochs.
-  >>> callback.on_epoch_end(epoch=your_epoch_number, current=your_current_loss)
-  >>> # on_epoch_end return if Early stopping performed
+  >>> callback.step(epoch=your_epoch_number, current=your_current_loss)
+  >>> # step return if Early stopping performed
   """
 
   def __init__(self,
