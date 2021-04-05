@@ -692,21 +692,7 @@ def train_loop(
           print('Eval model============================================')
           eval_metrics = eval_continuously(pipeline_config_path, model_dir=model_dir, checkpoint_dir=model_dir, timeout=20)
           print(eval_metrics)
-          
-    #       --pipeline_config_path={pipeline_fname} \
-    # --model_dir={model_dir_eval} \
-    # --checkpoint_dir={model_dir} \
-
-    #         pipeline_config_path,
-    #         config_override=None,
-    #         train_steps=None,
-    #         sample_1_of_n_eval_examples=1,
-    #         sample_1_of_n_eval_on_train_examples=1,
-    #         use_tpu=False,
-    #         override_eval_num_epochs=True,
-    #         postprocess_on_cpu=False,
-    #         model_dir=None,
-    #         checkpoint_dir=None,
+    
 
   # Remove the checkpoint directories of the non-chief workers that
   # MultiWorkerMirroredStrategy forces us to save during sync distributed
