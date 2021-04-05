@@ -31,7 +31,7 @@ class EarlyStopping():
                patience=0,
                verbose=0,
                mode='min',
-               baseline):
+               baseline=None):
 
     self.patience = patience
     self.verbose = verbose

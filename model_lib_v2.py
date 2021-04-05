@@ -36,7 +36,7 @@ from object_detection.utils import config_util
 from object_detection.utils import label_map_util
 from object_detection.utils import ops
 from object_detection.utils import visualization_utils as vutils
-
+from callbacks import EarlyStopping
 
 MODEL_BUILD_UTIL_MAP = model_lib.MODEL_BUILD_UTIL_MAP
 
