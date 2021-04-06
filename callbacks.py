@@ -27,7 +27,7 @@ class ModelCheckpoint():
     self.stopped_epoch = 0
     self.checkpoint = checkpoint
     self.baseline = baseline
-    self.save_name = save_name
+    self.save_name = Path(save_name)/Path('ckpt')
 
 
     if mode not in ['min', 'max']:
@@ -53,6 +53,8 @@ class ModelCheckpoint():
   def step(self, epoch, current):
     if current is None:
       return
+    n = self.save_name
+    print(f'============================================================={n}')
     if self.monitor_op(current, self.best):
       self.best = current
       self.stopped_epoch = epoch
