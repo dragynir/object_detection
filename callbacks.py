@@ -1,5 +1,13 @@
 import numpy as np
+from pathlib import Path
 from tensorflow.python.platform import tf_logging as logging
+
+
+
+class TrainLogger():
+    def __init__(self, logfile_name):
+        self.logfile_name = logfile_name
+    
 
 
 class ModelCheckpoint():
@@ -44,6 +52,7 @@ class ModelCheckpoint():
       return
     if self.monitor_op(current, self.best):
       self.best = current
+      self.stopped_epoch = epoch
       self.checkpoint.save(self.save_name)
       return True
 

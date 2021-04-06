@@ -36,7 +36,7 @@ from object_detection.utils import config_util
 from object_detection.utils import label_map_util
 from object_detection.utils import ops
 from object_detection.utils import visualization_utils as vutils
-from callbacks import EarlyStopping
+import callbacks as tfc
 
 MODEL_BUILD_UTIL_MAP = model_lib.MODEL_BUILD_UTIL_MAP
 
@@ -604,11 +604,17 @@ def train_loop(
         val_ckpt = tf.compat.v2.train.Checkpoint(
             step=global_step, model=detection_model, optimizer=optimizer)
 
+        model_checkpoint_callback = tfc.ModelCheckpoint(val_ckpt, 'NEED_TOREF_FOLDER_NAME')
+        early_stopping_callback = tfc.EarlyStopping(min_delta=0.0001, patience=5, mode='min')
+
+
         manager_dir = get_filepath(strategy, model_dir)
         if not strategy.extended.should_checkpoint:
           checkpoint_max_to_keep = 1
         manager = tf.compat.v2.train.CheckpointManager(
             ckpt, manager_dir, max_to_keep=checkpoint_max_to_keep)
+
+        
 
         # We use the following instead of manager.latest_checkpoint because
         # manager_dir does not point to the model directory when we are running
@@ -666,9 +672,11 @@ def train_loop(
         checkpointed_step = int(global_step.value())
         logged_step = global_step.value()
 
+        num_epochs = (train_steps - global_step.value()) // num_steps_per_iteration
+
         last_step_time = time.time()
-        for _ in range(global_step.value(), train_steps,
-                       num_steps_per_iteration):
+        for epoch, _ in enumerate(range(global_step.value(), train_steps,
+                       num_steps_per_iteration)):
 
           loss = _dist_train_step(train_input_iter)
 
@@ -692,8 +700,18 @@ def train_loop(
               checkpoint_every_n):
             manager.save()
             checkpointed_step = int(global_step.value())
+
           print('Eval model============================================')
-          eval_metrics = eval_continuously(pipeline_config_path, model_dir=model_dir, checkpoint_dir=model_dir, timeout=20)
+          log_metrics = eval_continuously(pipeline_config_path, model_dir=model_dir, checkpoint_dir=model_dir, timeout=20)
+          log_metrics['train_total_loss'] = loss
+
+          model_checkpoint_callback.step(epoch, log_metrics['Loss/total_loss'])
+          stop_training = early_stopping_callback.step(epoch, log_metrics['Loss/total_loss'])
+        
+          if stop_training:
+              pass
+            
+            
           print(eval_metrics)
     
 
