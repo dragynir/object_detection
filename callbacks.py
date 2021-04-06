@@ -5,9 +5,12 @@ from tensorflow.python.platform import tf_logging as logging
 
 
 class TrainLogger():
-    def __init__(self, logfile_name):
-        self.logfile_name = logfile_name
+    def __init__(self, log_dir, logfile_name):
+        self.logfile_name = str(Path(f'{log_dir}/{logfile_name}'))
     
+    def log(self, log_metrics):
+        with open(self.logfile_name, 'a') as f:
+            f.write(str(log_metrics) + '\n')
 
 
 class ModelCheckpoint():

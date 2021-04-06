@@ -609,7 +609,7 @@ def train_loop(
 
         model_checkpoint_callback = tfc.ModelCheckpoint(val_ckpt, 'NEED_TOREF_FOLDER_NAME')
         early_stopping_callback = tfc.EarlyStopping(min_delta=0.0001, patience=5, mode='min')
-
+        train_logger_callback = tfc.TrainLogger(model_dir, 'logs.txt')
 
         manager_dir = get_filepath(strategy, model_dir)
         if not strategy.extended.should_checkpoint:
@@ -710,7 +710,8 @@ def train_loop(
 
           model_checkpoint_callback.step(epoch, log_metrics['Loss/total_loss'])
           stop_training = early_stopping_callback.step(epoch, log_metrics['Loss/total_loss'])
-        
+          train_logger_callback.log(log_metrics)
+          
           if stop_training:
               pass
             
