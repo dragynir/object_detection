@@ -716,7 +716,7 @@ def train_loop(
                 pass
             
 
-          print(log_metrics)
+            print(log_metrics)
     
 
   # Remove the checkpoint directories of the non-chief workers that
