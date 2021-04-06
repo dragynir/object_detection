@@ -697,10 +697,8 @@ def train_loop(
                 'Step {} per-step time {:.3f}s loss={:.3f}'.format(
                     global_step.value(), time_taken / num_steps_per_iteration,
                     loss))
-            logged_step = global_step.value()
+            
 
-          if ((int(global_step.value()) - checkpointed_step) >=
-              checkpoint_every_n):
             manager.save()
             checkpointed_step = int(global_step.value())
 
@@ -715,8 +713,9 @@ def train_loop(
             if stop_training:
                 pass
             
-
             print(log_metrics)
+            logged_step = global_step.value()
+
     
 
   # Remove the checkpoint directories of the non-chief workers that
