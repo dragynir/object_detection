@@ -434,6 +434,7 @@ def clean_temporary_directories(strategy, filepath):
 def train_loop(
     pipeline_config_path,
     model_dir,
+    val_checkpoint_dir,
     config_override=None,
     train_steps=None,
     use_tpu=False,
@@ -460,6 +461,8 @@ def train_loop(
     pipeline_config_path: A path to a pipeline config file.
     model_dir:
       The directory to save checkpoints and summaries to.
+    val_checkpoint_dir:
+      The directory to save validation checkpoint.
     config_override: A pipeline_pb2.TrainEvalPipelineConfig text proto to
       override the config from `pipeline_config_path`.
     train_steps: Number of training steps. If None, the number of training steps
@@ -711,8 +714,8 @@ def train_loop(
           if stop_training:
               pass
             
-            
-          print(eval_metrics)
+
+          print(log_metrics)
     
 
   # Remove the checkpoint directories of the non-chief workers that

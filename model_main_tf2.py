@@ -53,6 +53,10 @@ flags.DEFINE_string(
     'model_dir', None, 'Path to output model directory '
                        'where event and checkpoint files will be written.')
 flags.DEFINE_string(
+    'val_checkpoint_dir', None, 'Path to output best validation checkpoint '
+                       'where validation checkpoint files will be written.')
+
+flags.DEFINE_string(
     'checkpoint_dir', None, 'Path to directory holding a checkpoint.  If '
     '`checkpoint_dir` is provided, this binary operates in eval-only mode, '
     'writing resulting metrics to `model_dir`.')
@@ -80,9 +84,10 @@ FLAGS = flags.FLAGS
 
 def main(unused_argv):
   flags.mark_flag_as_required('model_dir')
+  flags.mark_flag_as_required('val_checkpoint_dir')
   flags.mark_flag_as_required('pipeline_config_path')
   tf.config.set_soft_device_placement(True)
-
+  
   if FLAGS.checkpoint_dir:
     model_lib_v2.eval_continuously(
         pipeline_config_path=FLAGS.pipeline_config_path,
@@ -111,6 +116,7 @@ def main(unused_argv):
       model_lib_v2.train_loop(
           pipeline_config_path=FLAGS.pipeline_config_path,
           model_dir=FLAGS.model_dir,
+          val_checkpoint_dir=FLAGS.val_checkpoint_dir,
           train_steps=FLAGS.num_train_steps,
           use_tpu=FLAGS.use_tpu,
           checkpoint_every_n=FLAGS.checkpoint_every_n,

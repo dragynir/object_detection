@@ -18,9 +18,9 @@ class ModelCheckpoint():
                checkpoint,
                save_name,
                mode='min',
+               baseline=None,
                ):
 
-    self.patience = patience
     self.stopped_epoch = 0
     self.checkpoint = checkpoint
     self.baseline = baseline
