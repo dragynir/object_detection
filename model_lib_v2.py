@@ -675,7 +675,7 @@ def train_loop(
         checkpointed_step = int(global_step.value())
         logged_step = global_step.value()
 
-        num_epochs = (train_steps - global_step.value()) // num_steps_per_iteration
+        # num_epochs = (train_steps - global_step.value()) // num_steps_per_iteration
 
         last_step_time = time.time()
         for epoch, _ in enumerate(range(global_step.value(), train_steps,
@@ -704,16 +704,16 @@ def train_loop(
             manager.save()
             checkpointed_step = int(global_step.value())
 
-          print('Eval model============================================')
-          log_metrics = eval_continuously(pipeline_config_path, model_dir=model_dir, checkpoint_dir=model_dir, timeout=20)
-          log_metrics['train_total_loss'] = loss
+            print('Eval model============================================')
+            log_metrics = eval_continuously(pipeline_config_path, model_dir=model_dir, checkpoint_dir=model_dir, timeout=20)
+            log_metrics['train_total_loss'] = loss
 
-          model_checkpoint_callback.step(epoch, log_metrics['Loss/total_loss'])
-          stop_training = early_stopping_callback.step(epoch, log_metrics['Loss/total_loss'])
-          train_logger_callback.log(log_metrics)
+            model_checkpoint_callback.step(epoch, log_metrics['Loss/total_loss'])
+            stop_training = early_stopping_callback.step(epoch, log_metrics['Loss/total_loss'])
+            train_logger_callback.log(log_metrics)
 
-          if stop_training:
-              pass
+            if stop_training:
+                pass
             
 
           print(log_metrics)
