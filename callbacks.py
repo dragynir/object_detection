@@ -25,16 +25,14 @@ class ModelCheckpoint():
   """
 
   def __init__(self,
-               checkpoint,
-               save_name,
+               checkpoint_manager,
                mode='min',
                baseline=None,
                ):
 
     self.stopped_epoch = 0
-    self.checkpoint = checkpoint
+    self.checkpoint_manager = checkpoint_manager
     self.baseline = baseline
-    self.save_name = str(Path(save_name)/Path('ckpt'))
 
 
     if mode not in ['min', 'max']:
@@ -60,12 +58,10 @@ class ModelCheckpoint():
   def step(self, epoch, current):
     if current is None:
       return
-    n = self.save_name
     if self.monitor_op(current, self.best):
       self.best = current
       self.stopped_epoch = epoch
-      # checkpoint.read("/tmp/ckpt").assert_consumed() read example
-      self.checkpoint.write(self.save_name)
+      self.checkpoint_manager.save()
       return True
 
     return False     
@@ -143,6 +139,7 @@ class EarlyStopping():
     else:
       self.wait += 1
       if self.wait >= self.patience:
+        print('=============================================================== Perform early stopping')
         self.stopped_epoch = epoch
         return True
     return False        

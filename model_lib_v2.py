@@ -607,19 +607,24 @@ def train_loop(
         val_ckpt = tf.compat.v2.train.Checkpoint(
             step=global_step, model=detection_model, optimizer=optimizer)
 
-        model_checkpoint_callback = tfc.ModelCheckpoint(val_ckpt, val_checkpoint_dir)
-        early_stopping_callback = tfc.EarlyStopping(min_delta=0.0001, patience=5, mode='min')
-        train_logger_callback = tfc.TrainLogger(model_dir, 'logs.txt')
-        cancellation_point = tfc.CancellationPoint()
-
         manager_dir = get_filepath(strategy, model_dir)
+        val_manager_dir = get_filepath(strategy, val_checkpoint_dir)
+
+
+
         # if not strategy.extended.should_checkpoint:
             # checkpoint_max_to_keep = 1
             
         checkpoint_max_to_keep = 1
         manager = tf.compat.v2.train.CheckpointManager(
             ckpt, manager_dir, max_to_keep=checkpoint_max_to_keep)
+        val_manager = tf.compat.v2.train.CheckpointManager(
+            val_ckpt, val_manager_dir, max_to_keep=checkpoint_max_to_keep)
 
+        model_checkpoint_callback = tfc.ModelCheckpoint(val_manager)
+        early_stopping_callback = tfc.EarlyStopping(min_delta=0.0001, patience=5, mode='min')
+        train_logger_callback = tfc.TrainLogger(model_dir, 'logs.txt')
+        cancellation_point = tfc.CancellationPoint()
         
 
         # We use the following instead of manager.latest_checkpoint because
