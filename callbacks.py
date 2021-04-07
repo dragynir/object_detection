@@ -13,6 +13,13 @@ class TrainLogger():
             f.write(str(log_metrics) + '\n')
 
 
+class CancellationPoint():
+    def __init__(self):
+        pass
+    
+    def check(self):
+        return False
+
 class ModelCheckpoint():
   """
   """
@@ -27,7 +34,7 @@ class ModelCheckpoint():
     self.stopped_epoch = 0
     self.checkpoint = checkpoint
     self.baseline = baseline
-    self.save_name = Path(save_name)/Path('ckpt')
+    self.save_name = str(Path(save_name)/Path('ckpt'))
 
 
     if mode not in ['min', 'max']:
@@ -54,11 +61,11 @@ class ModelCheckpoint():
     if current is None:
       return
     n = self.save_name
-    print(f'============================================================={n}')
     if self.monitor_op(current, self.best):
       self.best = current
       self.stopped_epoch = epoch
-      self.checkpoint.save(self.save_name)
+      # checkpoint.read("/tmp/ckpt").assert_consumed() read example
+      self.checkpoint.write(self.save_name)
       return True
 
     return False     

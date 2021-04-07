@@ -610,10 +610,13 @@ def train_loop(
         model_checkpoint_callback = tfc.ModelCheckpoint(val_ckpt, val_checkpoint_dir)
         early_stopping_callback = tfc.EarlyStopping(min_delta=0.0001, patience=5, mode='min')
         train_logger_callback = tfc.TrainLogger(model_dir, 'logs.txt')
+        cancellation_point = tfc.CancellationPoint()
 
         manager_dir = get_filepath(strategy, model_dir)
-        if not strategy.extended.should_checkpoint:
-          checkpoint_max_to_keep = 1
+        # if not strategy.extended.should_checkpoint:
+            # checkpoint_max_to_keep = 1
+            
+        checkpoint_max_to_keep = 1
         manager = tf.compat.v2.train.CheckpointManager(
             ckpt, manager_dir, max_to_keep=checkpoint_max_to_keep)
 
@@ -710,8 +713,8 @@ def train_loop(
             stop_training = early_stopping_callback.step(epoch, log_metrics['Loss/total_loss'])
             train_logger_callback.log(log_metrics)
 
-            if stop_training:
-                pass
+            if stop_training or cancellation_point.check():
+                break
             
             print(log_metrics)
             logged_step = global_step.value()
