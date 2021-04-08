@@ -705,12 +705,10 @@ def train_loop(
                 'Step {} per-step time {:.3f}s loss={:.3f}'.format(
                     global_step.value(), time_taken / num_steps_per_iteration,
                     loss))
-            
 
             manager.save()
             checkpointed_step = int(global_step.value())
 
-            print('Eval model============================================')
             log_metrics = eval_continuously(pipeline_config_path, model_dir=model_dir, checkpoint_dir=model_dir, timeout=20)
             log_metrics['train_total_loss'] = loss
 

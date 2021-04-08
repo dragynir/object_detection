@@ -48,7 +48,6 @@ class ModelCheckpoint():
     self.on_train_begin()
 
   def on_train_begin(self):
-    # Allow instances to be re-used
     self.stopped_epoch = 0
     if self.baseline is not None:
       self.best = self.baseline
@@ -122,7 +121,6 @@ class EarlyStopping():
     self.on_train_begin()
 
   def on_train_begin(self):
-    # Allow instances to be re-used
     self.wait = 0
     self.stopped_epoch = 0
     if self.baseline is not None:
@@ -139,7 +137,6 @@ class EarlyStopping():
     else:
       self.wait += 1
       if self.wait >= self.patience:
-        print('=============================================================== Perform early stopping')
         self.stopped_epoch = epoch
         return True
     return False        
